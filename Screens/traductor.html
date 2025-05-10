@@ -15,14 +15,12 @@
     <!--  NAVBAR  -->
     <nav>
         <img src="../Image/logo.png" alt="">
-        <a href="ajustes.php">
+        <a href="ajustes.html">
             <img src="../Icon/ajustes.svg" alt="">
         </a>
     </nav>
 
     <div class="center-container">
-
-
         <div>
             <label>Letra detectada:</label>
             <div id="letraActual" class="campo-letra">_</div>
@@ -39,9 +37,8 @@
         </div>
     </div>
 
-    <!---
     <script>
-        let palabra = '';
+        /*let palabra = '';
 
         // Simulador de letras detectadas (reemplaza esto con integración real al guante)
         setInterval(() => {
@@ -65,9 +62,38 @@
             palabra = '';
             document.getElementById('palabraFormada').textContent = '_';
             document.getElementById('letraActual').textContent = '_';
+        }*/
+
+        function reproducirAudio() {
+            const ajustes = JSON.parse(localStorage.getItem("ajustesUsuario")) || {};
+            const palabraTexto = document.getElementById("palabraFormada").textContent;
+
+            if (!palabraTexto || palabraTexto === "_") return;
+
+            const utterance = new SpeechSynthesisUtterance(palabraTexto);
+
+            // Aplicar ajustes si existen
+            if (ajustes.velocidad) {
+                utterance.rate = parseFloat(ajustes.velocidad);
+            }
+
+            if (ajustes.voz) {
+                const voces = speechSynthesis.getVoices();
+                const vozSeleccionada = voces.find(v => v.lang === ajustes.voz);
+                if (vozSeleccionada) {
+                    utterance.voice = vozSeleccionada;
+                }
+            }
+
+            if (ajustes.sonido !== false) {
+                speechSynthesis.speak(utterance);
+            }
         }
+
+
+
     </script>
-    --->
+
 </body>
 
 </html>
