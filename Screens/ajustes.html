@@ -4,94 +4,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traductor de Señas</title>
+    <title>Ajustes</title>
     <link rel="stylesheet" href="../Style/style.css">
     <style>
+        .ajustes-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            margin: 100px auto 0 auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
 
+        .ajustes-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .ajustes-item {
+            margin-bottom: 20px;
+        }
+
+        .ajustes-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .ajustes-item select,
+        .ajustes-item input[type="checkbox"] {
+            padding: 10px;
+            border-radius: 15px;
+            border: none;
+            width: 100%;
+            background: linear-gradient(to right, #b2b1ff, #8d8dbc);
+            color: #000;
+            font-size: 14px;
+        }
+
+        .botones-ajustes {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .botones-ajustes button {
+            margin: 0 10px;
+        }
     </style>
 </head>
 
 <body>
-    <!--  NAVBAR  -->
     <nav>
         <img src="../Image/logo.png" alt="">
-        <a href="ajustes.html">
-            <img src="../Icon/ajustes.svg" alt="">
+        <a href="index.php">
+            <img src="../Icon/back.svg" alt="Volver" title="Volver">
         </a>
     </nav>
 
-    <div class="center-container">
-        <div>
-            <label>Letra detectada:</label>
-            <div id="letraActual" class="campo-letra">_</div>
+    <div class="ajustes-container">
+        <h2>Ajustes</h2>
+
+        <div class="ajustes-item">
+            <label for="voz">Voz del traductor:</label>
+            <select id="voz">
+                <option value="es-ES">Español - España</option>
+                <option value="es-MX">Español - México</option>
+                <option value="en-US">Inglés - EEUU</option>
+            </select>
         </div>
 
-        <div>
-            <label>Palabra en formación:</label>
-            <div id="palabraFormada" class="campo-palabra">_</div>
+        <div class="ajustes-item">
+            <label>Velocidad de lectura:</label>
+            <select id="velocidad">
+                <option value="0.5">Lento</option>
+                <option value="1">Normal</option>
+                <option value="1.5">Rápido</option>
+            </select>
         </div>
 
-        <div class="botones">
-            <button onclick="reproducirAudio()"><img src="../Icon/play.svg" alt=""></button>
-            <button onclick="borrarPalabra()"><img src="../Icon/trash.svg" alt=""></button>
+        <div class="ajustes-item">
+            <label>
+                <input type="checkbox" id="sonido">
+                Activar sonido
+            </label>
+        </div>
+
+        <div class="botones-ajustes">
+            <button onclick="guardarAjustes()">Guardar</button>
+            <button onclick="location.href='index.php'">Cancelar</button>
         </div>
     </div>
 
     <script>
-        /*let palabra = '';
+        // Referencias al DOM
+        const selectVoz = document.getElementById("voz");
+        const velocidadInput = document.getElementById("velocidad");
+        const sonidoInput = document.getElementById("sonido");
+        const guardarBtn = document.getElementById("guardar");
 
-        // Simulador de letras detectadas (reemplaza esto con integración real al guante)
-        setInterval(() => {
-            const letrasSimuladas = ['A', 'B', 'C', 'D', 'E'];
-            const letra = letrasSimuladas[Math.floor(Math.random() * letrasSimuladas.length)];
+        // Cargar voces disponibles
+        function cargarVoces() {
+            const voces = speechSynthesis.getVoices();
 
-            document.getElementById('letraActual').textContent = letra;
-            palabra += letra;
-            document.getElementById('palabraFormada').textContent = palabra;
-        }, 2000); // cada 2 segundos llega una letra
+            // Limpiar opciones anteriores
+            selectVoz.innerHTML = "";
 
-        function reproducirAudio() {
-            const palabraTexto = palabra;
-            if (palabraTexto.length === 0) return;
+            // Llenar el select con las voces
+            voces.forEach(voz => {
+                const opcion = document.createElement("option");
+                opcion.value = voz.lang;
+                opcion.textContent = `${voz.name} (${voz.lang})`;
+                selectVoz.appendChild(opcion);
+            });
 
-            const utterance = new SpeechSynthesisUtterance(palabraTexto);
-            speechSynthesis.speak(utterance);
-        }
-
-        function borrarPalabra() {
-            palabra = '';
-            document.getElementById('palabraFormada').textContent = '_';
-            document.getElementById('letraActual').textContent = '_';
-        }*/
-
-        function reproducirAudio() {
+            // Cargar ajustes guardados
             const ajustes = JSON.parse(localStorage.getItem("ajustesUsuario")) || {};
-            const palabraTexto = document.getElementById("palabraFormada").textContent;
-
-            if (!palabraTexto || palabraTexto === "_") return;
-
-            const utterance = new SpeechSynthesisUtterance(palabraTexto);
-
-            // Aplicar ajustes si existen
-            if (ajustes.velocidad) {
-                utterance.rate = parseFloat(ajustes.velocidad);
-            }
-
-            if (ajustes.voz) {
-                const voces = speechSynthesis.getVoices();
-                const vozSeleccionada = voces.find(v => v.lang === ajustes.voz);
-                if (vozSeleccionada) {
-                    utterance.voice = vozSeleccionada;
-                }
-            }
-
-            if (ajustes.sonido !== false) {
-                speechSynthesis.speak(utterance);
-            }
+            if (ajustes.voz) selectVoz.value = ajustes.voz;
+            if (ajustes.velocidad) velocidadInput.value = ajustes.velocidad;
+            if (typeof ajustes.sonido === "boolean") sonidoInput.checked = ajustes.sonido;
         }
 
+        // Algunos navegadores no tienen las voces listas inmediatamente
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = cargarVoces;
+        } else {
+            cargarVoces();
+        }
 
-
+        // Guardar ajustes
+        guardarBtn.addEventListener("click", () => {
+            const ajustes = {
+                voz: selectVoz.value,
+                velocidad: velocidadInput.value,
+                sonido: sonidoInput.checked
+            };
+            localStorage.setItem("ajustesUsuario", JSON.stringify(ajustes));
+            alert("¡Ajustes guardados!");
+        });
     </script>
 
 </body>
