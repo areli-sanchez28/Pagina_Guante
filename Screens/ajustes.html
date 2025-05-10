@@ -1,20 +1,99 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajustes</title>
+    <title>Traductor de Señas</title>
     <link rel="stylesheet" href="../Style/style.css">
+    <style>
 
+    </style>
 </head>
+
 <body>
     <!--  NAVBAR  -->
     <nav>
         <img src="../Image/logo.png" alt="">
-        <a href="traductor.php">
-            <img src="../Icon/home.svg" alt="">
+        <a href="ajustes.html">
+            <img src="../Icon/ajustes.svg" alt="">
         </a>
     </nav>
-    
+
+    <div class="center-container">
+        <div>
+            <label>Letra detectada:</label>
+            <div id="letraActual" class="campo-letra">_</div>
+        </div>
+
+        <div>
+            <label>Palabra en formación:</label>
+            <div id="palabraFormada" class="campo-palabra">_</div>
+        </div>
+
+        <div class="botones">
+            <button onclick="reproducirAudio()"><img src="../Icon/play.svg" alt=""></button>
+            <button onclick="borrarPalabra()"><img src="../Icon/trash.svg" alt=""></button>
+        </div>
+    </div>
+
+    <script>
+        /*let palabra = '';
+
+        // Simulador de letras detectadas (reemplaza esto con integración real al guante)
+        setInterval(() => {
+            const letrasSimuladas = ['A', 'B', 'C', 'D', 'E'];
+            const letra = letrasSimuladas[Math.floor(Math.random() * letrasSimuladas.length)];
+
+            document.getElementById('letraActual').textContent = letra;
+            palabra += letra;
+            document.getElementById('palabraFormada').textContent = palabra;
+        }, 2000); // cada 2 segundos llega una letra
+
+        function reproducirAudio() {
+            const palabraTexto = palabra;
+            if (palabraTexto.length === 0) return;
+
+            const utterance = new SpeechSynthesisUtterance(palabraTexto);
+            speechSynthesis.speak(utterance);
+        }
+
+        function borrarPalabra() {
+            palabra = '';
+            document.getElementById('palabraFormada').textContent = '_';
+            document.getElementById('letraActual').textContent = '_';
+        }*/
+
+        function reproducirAudio() {
+            const ajustes = JSON.parse(localStorage.getItem("ajustesUsuario")) || {};
+            const palabraTexto = document.getElementById("palabraFormada").textContent;
+
+            if (!palabraTexto || palabraTexto === "_") return;
+
+            const utterance = new SpeechSynthesisUtterance(palabraTexto);
+
+            // Aplicar ajustes si existen
+            if (ajustes.velocidad) {
+                utterance.rate = parseFloat(ajustes.velocidad);
+            }
+
+            if (ajustes.voz) {
+                const voces = speechSynthesis.getVoices();
+                const vozSeleccionada = voces.find(v => v.lang === ajustes.voz);
+                if (vozSeleccionada) {
+                    utterance.voice = vozSeleccionada;
+                }
+            }
+
+            if (ajustes.sonido !== false) {
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+
+
+    </script>
+
 </body>
+
 </html>
