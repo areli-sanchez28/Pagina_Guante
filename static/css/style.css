@@ -1,17 +1,25 @@
 body {
     margin: 0;
     padding: 0;
-    height: 100vh;
-    background-color: #eaeaff; /* Color azul de fondo */
+    min-height: 100vh;
+    background-color: #eaeaff;
+    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: Arial, sans-serif;
 }
 
 .center-container {
+    width: 90%;
+    max-width: 500px;
+    height: 400px;
+    padding: 20px;
     text-align: center;
+    align-items: center;
     color: #000;
+    border-radius: 15px;
+    background-color: aliceblue;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .center-container h1 {
@@ -20,8 +28,11 @@ body {
     letter-spacing: 2px;
 }
 
-.logo img{
-    height: 200px;
+
+.logo img {
+    height: 150px;
+    max-width: 100%;
+    margin-bottom: 15px;
 }
 
 .icono img {
@@ -33,11 +44,14 @@ form {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    align-items: center;
 }
 
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+.campo-letra,
+.campo-palabra {
     background: linear-gradient(to right, #b2b1ff, #8d8dbc);
     border: none;
     border-radius: 25px;
@@ -45,6 +59,13 @@ input[type="password"] {
     color: black;
     font-size: 16px;
     outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.campo-palabra {
+    height: 70px;
+    font-size: 30px;
 }
 
 button {
@@ -62,30 +83,11 @@ button:hover {
     background: linear-gradient(to right, #333, #555);
 }
 
-
-.campo-letra,
-.campo-palabra {
-    background: linear-gradient(to right, #b2b1ff, #8d8dbc);
-    border: none;
-    border-radius: 25px;
-    padding: 10px 20px;
-    color: black;
-    font-size: 18px;
-    margin: 10px -65px;
-    width: 150%;
-    
-}
-
-.campo-palabra{
-    height: 70px;
-    font-size: 30px;
-}
-
-
 .botones {
     margin-top: 20px;
     display: flex;
-    gap: 20px;
+    gap: 10px;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
@@ -93,31 +95,54 @@ button:hover {
     padding: 10px 25px;
 }
 
-.botones img{
+.botones img {
     height: 20px;
 }
 
 nav {
     position: fixed;
-    top: 5px;
+    top: 0;
     left: 0;
     right: 0;
-    width: 90%;
-    height: 150px; 
+    height: 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
     background-color: #eaeaff;
-    z-index: 1000; 
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Opcional: una sombra sutil */
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-
-nav img{
-    height: 150px;
+nav img {
+    height: 80px;
+    max-height: 100%;
 }
 
-nav a img{
+nav a img {
     height: 30px;
+}
+
+/* -------- Media Queries -------- */
+@media (max-width: 600px) {
+    .center-container {
+        padding: 15px;
+        max-width: 70%;
+    }
+
+    .campo-palabra {
+        font-size: 24px;
+        height: 60px;
+    }
+
+    nav {
+        justify-content: space-between;
+        height: auto;
+        padding: 15px;
+    }
+
+    nav img {
+        height: 60px;
+        margin: 5px;
+    }
 }
