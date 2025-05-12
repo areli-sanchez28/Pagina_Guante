@@ -1,165 +1,175 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ajustes</title>
-    <link rel="stylesheet" href="../static/css/style.css" />
-    <style>
-      .ajustes-container {
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        width: 90%;
-        max-width: 400px;
-        margin: 100px auto 0 auto;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        text-align: left;
-      }
 
-      .ajustes-container h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #333;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ajustes</title>
+  <link rel="stylesheet" href="../static/css/style.css" />
+  <style>
+    .ajustes-container {
+      width: 90%;
+      max-width: 500px;
+      height: 400px;
+      padding: 20px;
+      text-align: center;
+      align-items: center;
+      color: #000;
+      border-radius: 15px;
+      background-color: aliceblue;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-      .ajustes-item {
-        margin-bottom: 20px;
-      }
+    .ajustes-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
 
-      .ajustes-item label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-      }
+    .ajustes-item {
+      margin-bottom: 20px;
+    }
 
-      .ajustes-item select,
-      .ajustes-item input[type="checkbox"] {
-        padding: 10px;
-        border-radius: 15px;
-        border: none;
-        width: 100%;
-        background: linear-gradient(to right, #b2b1ff, #8d8dbc);
-        color: #000;
-        font-size: 14px;
-      }
+    .ajustes-item label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
 
-      .botones-ajustes {
-        text-align: center;
-        margin-top: 30px;
-      }
+    .ajustes-item select,
+    .ajustes-item input[type="checkbox"] {
+      padding: 10px;
+      border-radius: 15px;
+      border: none;
+      width: 100%;
+      background: linear-gradient(to right, #b2b1ff, #8d8dbc);
+      color: #000;
+      font-size: 14px;
+    }
 
-      .botones-ajustes button {
-        margin: 0 10px;
-      }
+    .botones-ajustes {
+      text-align: center;
+      margin-top: 30px;
+    }
 
-      #logout-form {
-        flex-direction: row;
-        justify-content: center;
-      }
+    .botones-ajustes button {
+      margin: 0 10px;
+    }
 
-      #logout-button {
-        background-color: red;
-      }
-    </style>
-  </head>
+    #logout-form {
+      flex-direction: row;
+      justify-content: center;
+    }
 
-  <body>
-    <nav>
-      <img src="../static/img/logo.png" alt="" />
-      <a href="index.html">
-        <img src="../static/img/back.svg" alt="Volver" title="Volver" />
-      </a>
-    </nav>
+    #logout-button {
+      background-color: red;
+    }
+    @media (max-width: 600px) {
+    .ajustes-container {
+        padding: 15px;
+        max-width: 70%;
+    }
+  }
+  </style>
+</head>
 
-    <div class="ajustes-container">
-      <h2>Ajustes</h2>
+<body>
+  <nav>
+    <img src="../static/img/logo.png" alt="" />
+    <a href="index.html">
+      <img src="../static/img/back.svg" alt="Volver" title="Volver" />
+    </a>
+  </nav>
 
-      <div class="ajustes-item">
-        <label for="voz">Voz del traductor:</label>
-        <select id="voz">
-          <option value="es-ES">Español - España</option>
-          <option value="es-MX">Español - México</option>
-          <option value="en-US">Inglés - EEUU</option>
-        </select>
-      </div>
+  <div class="ajustes-container">
+    <h2>Ajustes</h2>
 
-      <div class="ajustes-item">
-        <label>Velocidad de lectura:</label>
-        <select id="velocidad">
-          <option value="0.5">Lento</option>
-          <option value="1">Normal</option>
-          <option value="1.5">Rápido</option>
-        </select>
-      </div>
-
-      <div class="ajustes-item">
-        <label>
-          <input type="checkbox" id="sonido" />
-          Activar sonido
-        </label>
-      </div>
-
-      <div class="ajustes-item">
-        <form id="logout-form" action="/logout" method="POST">
-          <button id="logout-button" type="submit">Cerrar sesión</button>
-        </form>
-      </div>
-
-      <div class="botones-ajustes">
-        <button onclick="guardarAjustes()">Guardar</button>
-        <button onclick="location.href='traductor.html'">Cancelar</button>
-      </div>
+    <div class="ajustes-item">
+      <label for="voz">Voz del traductor:</label>
+      <select id="voz">
+        <option value="es-ES">Español - España</option>
+        <option value="es-MX">Español - México</option>
+        <option value="en-US">Inglés - EEUU</option>
+      </select>
     </div>
 
-    <script>
-      // Referencias al DOM
-      const selectVoz = document.getElementById("voz");
-      const velocidadInput = document.getElementById("velocidad");
-      const sonidoInput = document.getElementById("sonido");
-      const guardarBtn = document.getElementById("guardar");
+    <div class="ajustes-item">
+      <label>Velocidad de lectura:</label>
+      <select id="velocidad">
+        <option value="0.5">Lento</option>
+        <option value="1">Normal</option>
+        <option value="1.5">Rápido</option>
+      </select>
+    </div>
 
-      // Cargar voces disponibles
-      function cargarVoces() {
-        const voces = speechSynthesis.getVoices();
+    <div class="ajustes-item">
+      <label>
+        <input type="checkbox" id="sonido" />
+        Activar sonido
+      </label>
+    </div>
 
-        // Limpiar opciones anteriores
-        selectVoz.innerHTML = "";
+    <div class="ajustes-item">
+      <form id="logout-form" action="/logout" method="POST">
+        <button id="logout-button" type="submit">Cerrar sesión</button>
+      </form>
+    </div>
 
-        // Llenar el select con las voces
-        voces.forEach((voz) => {
-          const opcion = document.createElement("option");
-          opcion.value = voz.lang;
-          opcion.textContent = `${voz.name} (${voz.lang})`;
-          selectVoz.appendChild(opcion);
-        });
+    <div class="botones-ajustes">
+      <button onclick="guardarAjustes()">Guardar</button>
+      <button onclick="location.href='traductor.html'">Cancelar</button>
+    </div>
+  </div>
 
-        // Cargar ajustes guardados
-        const ajustes =
-          JSON.parse(localStorage.getItem("ajustesUsuario")) || {};
-        if (ajustes.voz) selectVoz.value = ajustes.voz;
-        if (ajustes.velocidad) velocidadInput.value = ajustes.velocidad;
-        if (typeof ajustes.sonido === "boolean")
-          sonidoInput.checked = ajustes.sonido;
-      }
+  <script>
+    // Referencias al DOM
+    const selectVoz = document.getElementById("voz");
+    const velocidadInput = document.getElementById("velocidad");
+    const sonidoInput = document.getElementById("sonido");
+    const guardarBtn = document.getElementById("guardar");
 
-      // Algunos navegadores no tienen las voces listas inmediatamente
-      if (speechSynthesis.onvoiceschanged !== undefined) {
-        speechSynthesis.onvoiceschanged = cargarVoces;
-      } else {
-        cargarVoces();
-      }
+    // Cargar voces disponibles
+    function cargarVoces() {
+      const voces = speechSynthesis.getVoices();
 
-      // Guardar ajustes
-      guardarBtn.addEventListener("click", () => {
-        const ajustes = {
-          voz: selectVoz.value,
-          velocidad: velocidadInput.value,
-          sonido: sonidoInput.checked,
-        };
-        localStorage.setItem("ajustesUsuario", JSON.stringify(ajustes));
-        alert("¡Ajustes guardados!");
+      // Limpiar opciones anteriores
+      selectVoz.innerHTML = "";
+
+      // Llenar el select con las voces
+      voces.forEach((voz) => {
+        const opcion = document.createElement("option");
+        opcion.value = voz.lang;
+        opcion.textContent = `${voz.name} (${voz.lang})`;
+        selectVoz.appendChild(opcion);
       });
-    </script>
-  </body>
+
+      // Cargar ajustes guardados
+      const ajustes =
+        JSON.parse(localStorage.getItem("ajustesUsuario")) || {};
+      if (ajustes.voz) selectVoz.value = ajustes.voz;
+      if (ajustes.velocidad) velocidadInput.value = ajustes.velocidad;
+      if (typeof ajustes.sonido === "boolean")
+        sonidoInput.checked = ajustes.sonido;
+    }
+
+    // Algunos navegadores no tienen las voces listas inmediatamente
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = cargarVoces;
+    } else {
+      cargarVoces();
+    }
+
+    // Guardar ajustes
+    guardarBtn.addEventListener("click", () => {
+      const ajustes = {
+        voz: selectVoz.value,
+        velocidad: velocidadInput.value,
+        sonido: sonidoInput.checked,
+      };
+      localStorage.setItem("ajustesUsuario", JSON.stringify(ajustes));
+      alert("¡Ajustes guardados!");
+    });
+  </script>
+</body>
+
 </html>
