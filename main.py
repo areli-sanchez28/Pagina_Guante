@@ -5,6 +5,19 @@ from fastapi.templating import Jinja2Templates
 import firebase_admin
 from firebase_admin import credentials, firestore
 import bcrypt
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+firebase_api_key = os.getenv("FIREBASE_API_KEY")
+firebase_auth_domain = os.getenv("FIREBASE_AUTH_DOMAIN")
+firebase_database_url = os.getenv("FIREBASE_DATABASE_URL")
+firebase_project_id = os.getenv("FIREBASE_PROJECT_ID")
+firebase_storage_bucket = os.getenv("FIREBASE_STORAGE_BUCKET")
+firebase_messaging_sender_id = os.getenv("FIREBASE_MESSAGING_SENDER_ID")
+firebase_app_id = os.getenv("FIREBASE_APP_ID")
+firebase_measurement_id = os.getenv("FIREBASE_MEASUREMENT_ID")
 
 app = FastAPI()
 
@@ -112,3 +125,16 @@ async def logout():
     # Borramos la cookie de sesión
     response.delete_cookie(key="user_id")
     return response
+
+@app.get("/config")
+def firebase_config():
+    return {
+        "apiKey": firebase_api_key,
+        "authDomain": firebase_auth_domain,
+        "databaseURL": firebase_database_url,
+        "projectId": firebase_project_id,
+        "storageBucket": firebase_storage_bucket,
+        "messagingSenderId": firebase_messaging_sender_id,
+        "appId": firebase_app_id,
+        "measurementId": firebase_measurement_id,
+      }
