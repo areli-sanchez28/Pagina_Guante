@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión</title>
+    <!-- Carga estilo desde FastAPI -->
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <div class="center-container">
+      <div class="logo">
+        <!-- Carga imagen desde FastAPI -->
+        <img
+          src="/static/img/logo.png"
+          alt="Connect: Guante traductor de señas"
+        />
+      </div>
+      <!-- Apunta al endpoint /login -->
+      <form action="/login" method="post">
+        <input type="email" placeholder="Email" name="email" required />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          name="password"
+          required
+        />
+        <button type="submit">Aceptar</button>
+      </form>
+      {% if error %}
+      <p style="color: red">{{ error }}</p>
+      {% endif %}
+      <p>
+        ¿Aún no tienes cuenta?<br />
+        <a href="/nLog.html">Regístrate aquí</a>
+      </p>
+    </div>
+  </body>
+</html>
