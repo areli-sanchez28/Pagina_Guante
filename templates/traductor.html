@@ -5,15 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Traductor de Señas</title>
     <link rel="stylesheet" href="../static/css/style.css" />
-    <style></style>
+    <!-- Firebase JS SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-firestore-compat.js"></script>
   </head>
 
   <body>
-    <!--  NAVBAR  -->
+    <!-- NAVBAR -->
     <nav>
-      <img src="../static/img/logo.png" alt="" />
+      <img src="../static/img/logo.png" alt="Logo" />
       <a href="ajustes.html">
-        <img src="../static/img/ajustes.svg" alt="" />
+        <img src="../static/img/ajustes.svg" alt="Ajustes" />
       </a>
     </nav>
 
@@ -30,67 +32,87 @@
 
       <div class="botones">
         <button onclick="reproducirAudio()">
-          <img src="../static/img/play.svg" alt="" />
+          <img src="../static/img/play.svg" alt="Reproducir" />
         </button>
         <button onclick="borrarPalabra()">
-          <img src="../static/img/trash.svg" alt="" />
+          <img src="../static/img/trash.svg" alt="Borrar" />
         </button>
       </div>
     </div>
 
     <script>
-      /*let palabra = '';
+      // 1) Configuración de Firebase (reemplaza con la tuya)
+      const firebaseConfig = {
+        apiKey: "AIzaSyAGAdZxqJhUEUAP2jC_1SE_j2LXfgCofcc",
+        authDomain: "guante-traductor-ee24c.firebaseapp.com",
+        databaseURL:
+          "https://guante-traductor-ee24c-default-rtdb.firebaseio.com",
+        projectId: "guante-traductor-ee24c",
+        storageBucket: "guante-traductor-ee24c.firebasestorage.app",
+        messagingSenderId: "28402876983",
+        appId: "1:28402876983:web:3a9a865c20dfa9b751f5b2",
+        measurementId: "G-NFXY8MSJ8P",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
 
-        // Simulador de letras detectadas (reemplaza esto con integración real al guante)
-        setInterval(() => {
-            const letrasSimuladas = ['A', 'B', 'C', 'D', 'E'];
-            const letra = letrasSimuladas[Math.floor(Math.random() * letrasSimuladas.length)];
+      // 2) Obtener user_id inyectado por FastAPI
+      const userId = "{{ user_id }}";
 
-            document.getElementById('letraActual').textContent = letra;
+      let palabra = "";
+      let isInitialLoad = true;
+
+      // 3) Referencia a la subcolección de letras
+      const letrasCol = db.collection("letra_actual");
+
+      // 4) Listener real-time para nuevos documentos
+      letrasCol.onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            if (isInitialLoad) return;
+            const letra = change.doc.data().letra;
+
+            // Actualizar letra actual
+            document.getElementById("letraActual").textContent = letra;
+
+            // Concatenar palabra
             palabra += letra;
-            document.getElementById('palabraFormada').textContent = palabra;
-        }, 2000); // cada 2 segundos llega una letra
+            document.getElementById("palabraFormada").textContent = palabra;
+          }
+        });
+        isInitialLoad = false;
+      });
 
-        function reproducirAudio() {
-            const palabraTexto = palabra;
-            if (palabraTexto.length === 0) return;
-
-            const utterance = new SpeechSynthesisUtterance(palabraTexto);
-            speechSynthesis.speak(utterance);
-        }
-
-        function borrarPalabra() {
-            palabra = '';
-            document.getElementById('palabraFormada').textContent = '_';
-            document.getElementById('letraActual').textContent = '_';
-        }*/
-
+      // 5) Función para reproducir el texto
       function reproducirAudio() {
         const ajustes =
           JSON.parse(localStorage.getItem("ajustesUsuario")) || {};
-        const palabraTexto =
-          document.getElementById("palabraFormada").textContent;
-
-        if (!palabraTexto || palabraTexto === "_") return;
-
-        const utterance = new SpeechSynthesisUtterance(palabraTexto);
-
-        // Aplicar ajustes si existen
-        if (ajustes.velocidad) {
-          utterance.rate = parseFloat(ajustes.velocidad);
-        }
-
+        if (!palabra) return;
+        const utterance = new SpeechSynthesisUtterance(palabra);
+        if (ajustes.velocidad) utterance.rate = parseFloat(ajustes.velocidad);
         if (ajustes.voz) {
           const voces = speechSynthesis.getVoices();
-          const vozSeleccionada = voces.find((v) => v.lang === ajustes.voz);
-          if (vozSeleccionada) {
-            utterance.voice = vozSeleccionada;
-          }
+          const v = voces.find((v) => v.lang === ajustes.voz);
+          if (v) utterance.voice = v;
         }
+        if (ajustes.sonido !== false) speechSynthesis.speak(utterance);
+      }
 
-        if (ajustes.sonido !== false) {
-          speechSynthesis.speak(utterance);
-        }
+      // 6) Función para subir la palabra al historial y resetear
+      function borrarPalabra() {
+        if (!palabra) return;
+        db.collection("historial")
+          .add({
+            palabra: palabra,
+            fecha: firebase.firestore.FieldValue.serverTimestamp(),
+            userId: userId,
+          })
+          .then(() => {
+            // Reset UI
+            palabra = "";
+            document.getElementById("letraActual").textContent = "_";
+            document.getElementById("palabraFormada").textContent = "_";
+          });
       }
     </script>
   </body>
