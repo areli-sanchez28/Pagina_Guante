@@ -40,80 +40,72 @@
       </div>
     </div>
 
+    <!-- Script de inicialización y listener -->
     <script>
-      // 1) Configuración de Firebase (reemplaza con la tuya)
-      const firebaseConfig = {
-        apiKey: "AIzaSyAGAdZxqJhUEUAP2jC_1SE_j2LXfgCofcc",
-        authDomain: "guante-traductor-ee24c.firebaseapp.com",
-        databaseURL:
-          "https://guante-traductor-ee24c-default-rtdb.firebaseio.com",
-        projectId: "guante-traductor-ee24c",
-        storageBucket: "guante-traductor-ee24c.firebasestorage.app",
-        messagingSenderId: "28402876983",
-        appId: "1:28402876983:web:3a9a865c20dfa9b751f5b2",
-        measurementId: "G-NFXY8MSJ8P",
-      };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
+      (async () => {
+        try {
+          // 1) Obtener configuración de Firebase desde el servidor
+          const response = await fetch('/config');
+          if (!response.ok) throw new Error('No se pudo cargar /config');
+          const cfg = await response.json();
 
-      // 2) Obtener user_id inyectado por FastAPI
-      const userId = "{{ user_id }}";
+          // 2) Inicializar Firebase con la configuración dinámica
+          firebase.initializeApp(cfg);
+          const db = firebase.firestore();
 
-      let palabra = "";
-      let isInitialLoad = true;
+          // 3) Variables y referencias
+          const userId = "{{ user_id }}";
+          let palabra = '';
+          let isInitialLoad = true;
+          const letrasCol = db.collection('letra_actual');
 
-      // 3) Referencia a la subcolección de letras
-      const letrasCol = db.collection("letra_actual");
+          // 4) Escucha en tiempo real
+          letrasCol.onSnapshot(snapshot => {
+            snapshot.docChanges().forEach(change => {
+              if (change.type === 'added') {
+                if (isInitialLoad) return;
+                const letra = change.doc.data().letra;
 
-      // 4) Listener real-time para nuevos documentos
-      letrasCol.onSnapshot((snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            if (isInitialLoad) return;
-            const letra = change.doc.data().letra;
-
-            // Actualizar letra actual
-            document.getElementById("letraActual").textContent = letra;
-
-            // Concatenar palabra
-            palabra += letra;
-            document.getElementById("palabraFormada").textContent = palabra;
-          }
-        });
-        isInitialLoad = false;
-      });
-
-      // 5) Función para reproducir el texto
-      function reproducirAudio() {
-        const ajustes =
-          JSON.parse(localStorage.getItem("ajustesUsuario")) || {};
-        if (!palabra) return;
-        const utterance = new SpeechSynthesisUtterance(palabra);
-        if (ajustes.velocidad) utterance.rate = parseFloat(ajustes.velocidad);
-        if (ajustes.voz) {
-          const voces = speechSynthesis.getVoices();
-          const v = voces.find((v) => v.lang === ajustes.voz);
-          if (v) utterance.voice = v;
-        }
-        if (ajustes.sonido !== false) speechSynthesis.speak(utterance);
-      }
-
-      // 6) Función para subir la palabra al historial y resetear
-      function borrarPalabra() {
-        if (!palabra) return;
-        db.collection("historial")
-          .add({
-            palabra: palabra,
-            fecha: firebase.firestore.FieldValue.serverTimestamp(),
-            userId: userId,
-          })
-          .then(() => {
-            // Reset UI
-            palabra = "";
-            document.getElementById("letraActual").textContent = "_";
-            document.getElementById("palabraFormada").textContent = "_";
+                // Mostrar letra y concatenar palabra
+                document.getElementById('letraActual').textContent = letra;
+                palabra += letra;
+                document.getElementById('palabraFormada').textContent = palabra;
+              }
+            });
+            isInitialLoad = false;
           });
-      }
+
+          // 5) Función para reproducir audio
+          window.reproducirAudio = () => {
+            const ajustes = JSON.parse(localStorage.getItem('ajustesUsuario')) || {};
+            if (!palabra) return;
+            const utterance = new SpeechSynthesisUtterance(palabra);
+            if (ajustes.velocidad) utterance.rate = parseFloat(ajustes.velocidad);
+            if (ajustes.voz) {
+              const voces = speechSynthesis.getVoices();
+              const v = voces.find(v => v.lang === ajustes.voz);
+              if (v) utterance.voice = v;
+            }
+            if (ajustes.sonido !== false) speechSynthesis.speak(utterance);
+          };
+
+          // 6) Función para subir palabra al historial y resetear
+          window.borrarPalabra = () => {
+            if (!palabra) return;
+            db.collection('historial').add({
+              palabra: palabra,
+              fecha: firebase.firestore.FieldValue.serverTimestamp(),
+              userId: userId
+            }).then(() => {
+              palabra = '';
+              document.getElementById('letraActual').textContent = '_';
+              document.getElementById('palabraFormada').textContent = '_';
+            }).catch(err => console.error('Error guardando historial:', err));
+          };
+        } catch (err) {
+          console.error('Error de configuración o inicialización de Firebase:', err);
+        }
+      })();
     </script>
   </body>
 </html>
